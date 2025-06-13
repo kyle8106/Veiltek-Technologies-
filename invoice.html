@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Generate professional invoices for tech services rendered by Veiltek Technologies.">
+  <title>Invoice Generator | Veiltek Technologies</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .invoice-box {
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+      border: 1px solid #eee;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+      font-size: 16px;
+      line-height: 24px;
+      font-family: 'Segoe UI', sans-serif;
+      color: #555;
+      background: white;
+    }
+    .invoice-box table {
+      width: 100%;
+      line-height: inherit;
+      text-align: left;
+    }
+    .invoice-box table td {
+      padding: 5px;
+      vertical-align: top;
+    }
+    .invoice-box table tr.heading td {
+      background: #eee;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+    .invoice-box table tr.item td{
+      border-bottom: 1px solid #eee;
+    }
+    .invoice-box table tr.total td:nth-child(2) {
+      border-top: 2px solid #eee;
+      font-weight: bold;
+    }
+    .download-button {
+      display: inline-block;
+      margin: 10px 0;
+      padding: 10px 15px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="veiltek_logo.png" alt="Veiltek Technologies Logo">
+  <h1>Invoice Generator</h1>
+</header>
+
+<section class="form-section">
+  <h2>Create a New Invoice</h2>
+  <form onsubmit="event.preventDefault(); generateInvoice();">
+    <label>Customer Name:</label><input id="custName" type="text" required>
+    <label>Service Provided:</label><input id="service" type="text" required>
+    <label>Amount ($):</label><input id="amount" type="number" step="0.01" required>
+    <label>Date:</label><input id="date" type="date" required>
+    <label>Invoice Number:</label><input id="invNumber" type="text" required>
+    <button type="submit">Generate Invoice</button>
+  </form>
+</section>
+
+<section id="invoicePreview" class="form-section" style="display:none;">
+  <h2>Invoice Preview</h2>
+  <div id="invoiceBox" class="invoice-box">
+    <!-- Invoice content will be inserted here by JS -->
+  </div>
+  <a href="#" class="download-button" onclick="downloadInvoice()">Download PDF</a>
+</section>
+
+<footer>
+  <p>© 2025 Veiltek Technologies | support@veiltek.io | (502) 467-6433</p>
+</footer>
+
+<script>
+function generateInvoice() {
+  const name = document.getElementById("custName").value;
+  const service = document.getElementById("service").value;
+  const amount = parseFloat(document.getElementById("amount").value).toFixed(2);
+  const date = document.getElementById("date").value;
+  const invoice = document.getElementById("invNumber").value;
+
+  document.getElementById("invoicePreview").style.display = "block";
+
+  document.getElementById("invoiceBox").innerHTML = `
+    <table cellpadding="0" cellspacing="0">
+      <tr class="top">
+        <td colspan="2">
+          <table>
+            <tr>
+              <td class="title">
+                <h2>Veiltek Technologies</h2>
+                <p>315 Shawnee Dr, Louisville, KY 40212<br>support@veiltek.io<br>(502) 467-6433</p>
+              </td>
+              <td>
+                Invoice #: ${invoice}<br>
+                Date: ${date}<br>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr class="information">
+        <td colspan="2">
+          <table>
+            <tr>
+              <td>Billed To:<br>${name}</td>
+              <td>Service:<br>${service}</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr class="heading">
+        <td>Description</td><td>Amount</td>
+      </tr>
+      <tr class="item">
+        <td>${service}</td><td>$${amount}</td>
+      </tr>
+      <tr class="total">
+        <td></td><td>Total: $${amount}</td>
+      </tr>
+    </table>`;
+}
+
+function downloadInvoice() {
+  const element = document.getElementById("invoiceBox");
+  const opt = {
+    margin:       0.5,
+    filename:     'Veiltek_Invoice.pdf',
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+  html2pdf().from(element).set(opt).save();
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</body>
+</html>
